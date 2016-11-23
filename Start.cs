@@ -8,12 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsApplication1.Properties;
+using System.Threading;
 
 namespace WindowsFormsApplication1
 {
     public partial class Start : Form
     {
-        
+        Thread Close1;
 
         Image background = Resources.witcher44;
         Image begin_red = Resources.BEGIN;
@@ -47,6 +48,27 @@ namespace WindowsFormsApplication1
             Application.Exit();
         }
 
-       
+        private void buttonBegin_MouseEnter(object sender, EventArgs e)
+        {
+            buttonBegin.Image = begin_red;
+        }
+
+        private void buttonBegin_MouseLeave(object sender, EventArgs e)
+        {
+            buttonBegin.Image = begin;
+        }
+
+        private void buttonBegin_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Close1 = new Thread(opennewform);
+            Close1.SetApartmentState(ApartmentState.STA);
+            Close1.Start();
+        }
+
+        private void opennewform()
+        {
+            Application.Run(new ChooseLevel());
+        }
     }
 }
