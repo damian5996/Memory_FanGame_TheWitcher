@@ -14,262 +14,194 @@ namespace WindowsFormsApplication1
 {
     public partial class EasyGame : Form
     {
+        private int endtoscore = 0;
+        Thread Close5;
         Thread Close7;
         Image bruxa = Resources.bruxa2E;
         Image ciri = Resources.ciriE;
         Image geralt = Resources.geraltE;
         Image logo = Resources.back1;
-
+        List<Button> Buttons = new List<Button>();
+        List<int> Rand = new List<int>();
         public int[] tab = new int[6];
-        public int[] klik = new int[2];
+        public int[] clicked = new int[2];
+        private int which;
+
         private int counter = 0;
         private int score;
         private int count_bruxa = 60;
         private int count_ciri = 60;
         private int count_geralt = 60;
+
         public EasyGame()
         {
             #region Random
+            Rand = new List<int> { 0, 0, 1, 1, 2, 2 };
             Random rnd = new Random();
-            int a, b;
-            int i = 0;
-            while (i < 6)
+
+            for (int i = 0; i < 6; i++)
             {
-                a = rnd.Next(0, 3);
-                b = 0;
-                for (int j = 0; j < i; j++)
-                {
-                    if (tab[j] == a)
-                        b++;
-                }
-                if (b < 2)
-                {
-                    tab[i] = a;
-                    i++;
-                }
+                int RandIndex = rnd.Next(Rand.Count);
+                tab[i] = Rand[RandIndex];
+                Rand.Remove(Rand[RandIndex]);
             }
+        
             #endregion
 
-            InitializeComponent();  
+            InitializeComponent();
+        }
+        private void EasyGame_Load(object sender, EventArgs e)
+        {
+            Buttons = new List<Button> { button1, button2, button3, button4, button5, button6 };
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void EasyEnd()
         {
+            if (endtoscore == 6)
+            {
+                if (score == 150)
+                {
+                    if (MessageBox.Show("Your score: " + score + ". Unbelievable! You are the real master!\nDo you want to play again?", "The End",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button1) == DialogResult.No)
+                    {
+                        Close();
+                        this.Close();
+                        Close5 = new Thread(opennewform8);
+                        Close5.SetApartmentState(ApartmentState.STA);
+                        Close5.Start();
+                    }
+                    else
+                    {
+                        Close();
+                        this.Close();
+                        Close5 = new Thread(opennewform9);
+                        Close5.SetApartmentState(ApartmentState.STA);
+                        Close5.Start();
+                    }
+                }
+                if (score < 150 && score >= 100)
+                {
+                    if (MessageBox.Show("Your score: " + score + ". Average. Try harder!\nMaybe next time you'll reach the bigger score :)\nDo you want to play again?", "The End",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button1) == DialogResult.No)
+                    {
+                        Close();
+                        this.Close();
+                        Close5 = new Thread(opennewform8);
+                        Close5.SetApartmentState(ApartmentState.STA);
+                        Close5.Start();
+                    }
+                    else
+                    {
+                        Close();
+                        this.Close();
+                        Close5 = new Thread(opennewform9);
+                        Close5.SetApartmentState(ApartmentState.STA);
+                        Close5.Start();
+                    }
+                }
+                if (score < 100)
+                {
+                    if (MessageBox.Show("Your score: " + score + ". Ooops. You should train your memory!\nDo you want to play again?", "The End",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button1) == DialogResult.No)
+                    {
+                        Close();
+                        this.Close();
+                        Close5 = new Thread(opennewform8);
+                        Close5.SetApartmentState(ApartmentState.STA);
+                        Close5.Start();
+                    }
+                    else
+                    {
+                        Close();
+                        this.Close();
+                        Close5 = new Thread(opennewform9);
+                        Close5.SetApartmentState(ApartmentState.STA);
+                        Close5.Start();
+                    }
+                }
+            }
+        }
+        private void opennewform8()
+        {
+            Application.Run(new ChooseLevel());
+        }
+        private void opennewform9()
+        {
+            Application.Run(new EasyGame());
+        }
+        private void WhichButton(Button box)
+        {
+            if (box == button1)
+                which = 0;
+            else if (box == button2)
+                which = 1;
+            else if (box == button3)
+                which = 2;
+            else if (box == button4)
+                which = 3;
+            else if (box == button5)
+                which = 4;
+            else if (box == button6)
+                which = 5;
+        }
+        private void button_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            WhichButton(button);
             if (counter < 2)
             {
-                if (tab[0] == 0)
+                if (tab[which] == 0)
                 {
-                    button1.Image = bruxa;
+                    button.Image = bruxa;
                     count_bruxa -= 5;
-
                 }
-                if (tab[0] == 1)
+                else if (tab[which] == 1)
                 {
-                    button1.Image = ciri;
+                    button.Image = ciri;
                     count_ciri -= 5;
                 }
-                if (tab[0] == 2)
+                else if (tab[which] == 2)
                 {
-                    button1.Image = geralt;
+                    button.Image = geralt;
                     count_geralt -= 5;
                 }
-                klik[counter] = tab[0];
+                clicked[counter] = tab[which];
                 counter++;
             }
             else
             {
                 reset();
-                if (klik[0] == klik[1])
-                    delete(klik[0]);
-            }
-        }
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (counter < 2)
-            {
-                if (tab[1] == 0)
+                if (clicked[0] == clicked[1])
                 {
-                    button2.Image = bruxa;
-                    count_bruxa -= 5;
+                    delete(clicked[0]);
+                    endtoscore+=2;
                 }
-                if (tab[1] == 1)
-                {
-                    button2.Image = ciri;
-                    count_ciri -= 5;
-                }
-                if (tab[1] == 2)
-                {
-                    button2.Image = geralt;
-                    count_geralt -= 5;
-                }
-                klik[counter] = tab[1];
-                counter++;
-            }
-            else
-            {
-                reset();
-                if (klik[0] == klik[1])
-                    delete(klik[0]);
-            }
-        }
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (counter < 2)
-            {
-                if (tab[2] == 0)
-                {
-                    button3.Image = bruxa;
-                    count_bruxa -= 5;
-
-                }
-                if (tab[2] == 1)
-                {
-                    button3.Image = ciri;
-                    count_ciri -= 5;
-                }
-                if (tab[2] == 2)
-                {
-                    button3.Image = geralt;
-                    count_geralt -= 5;
-                }
-                klik[counter] = tab[2];
-                counter++;
-            }
-            else
-            {
-                reset();
-                if (klik[0] == klik[1])
-                    delete(klik[0]);
-            }
-        }
-        private void button4_Click(object sender, EventArgs e)
-        {
-
-            if (counter < 2)
-            {
-                if (tab[3] == 0)
-                {
-                    button4.Image = bruxa;
-                    count_bruxa -= 5;
-
-                }
-                if (tab[3] == 1)
-                {
-                    button4.Image = ciri;
-                    count_ciri -= 5;
-                }
-                if (tab[3] == 2)
-                {
-                    button4.Image = geralt;
-                    count_geralt -= 5;
-                }
-                klik[counter] = tab[3];
-                counter++;
-            }
-            else
-            {
-                reset();
-                if (klik[0] == klik[1])
-                    delete(klik[0]);
-            }
-        }
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (counter < 2)
-            {
-                if (tab[4] == 0)
-                {
-                    button5.Image = bruxa;
-                    count_bruxa -= 5;
-
-                }
-                if (tab[4] == 1)
-                {
-                    button5.Image = ciri;
-                    count_ciri -= 5;
-                }
-                if (tab[4] == 2)
-                {
-                    button5.Image = geralt;
-                    count_geralt -= 5;
-                }
-                klik[counter] = tab[4];
-                counter++;
-            }
-            else
-            {
-                reset();
-                if (klik[0] == klik[1])
-                    delete(klik[0]);
-            }
-
-        }
-        private void button6_Click(object sender, EventArgs e)
-        {
-
-            if (counter < 2)
-            {
-                if (tab[5] == 0)
-                {
-                    button6.Image = bruxa;
-                    count_bruxa -= 5;
-
-                }
-                if (tab[5] == 1)
-                {
-                    button6.Image = ciri;
-                    count_ciri -= 5;
-                }
-                if (tab[5] == 2)
-                {
-                    button6.Image = geralt;
-                    count_geralt -= 5;
-                }
-                klik[counter] = tab[5];
-                counter++;
-            }
-            else
-            {
-                reset();
-                if (klik[0] == klik[1])
-                    delete(klik[0]);
+                EasyEnd();
             }
         }
         private void reset()
         {
-            button1.Image = logo;
-            button2.Image = logo;
-            button3.Image = logo;
-            button4.Image = logo;
-            button5.Image = logo;
-            button6.Image = logo;
+            foreach (var button in Buttons)
+            {
+                button.Image = logo;
+            }
             counter = 0;
         }
         private void delete(int a)
         {
-            if (tab[0] == a)
+            foreach (var button in Buttons)
             {
-                button1.Visible = false;
-            }
-            if (tab[1] == a)
-            {
-                button2.Visible = false;
-            }
-            if (tab[2] == a)
-            {
-                button3.Visible = false;
-            }
-            if (tab[3] == a)
-            {
-                button4.Visible = false;
-            }
-            if (tab[4] == a)
-            {
-                button5.Visible = false;
-            }
-            if (tab[5] == a)
-            {
-                button6.Visible = false;
+                WhichButton(button);
+                if (tab[which] == a)
+                {
+                    button.Visible = false;
+                }
             }
 
             #region count_bruxa
@@ -280,14 +212,14 @@ namespace WindowsFormsApplication1
             }
             #endregion
             #region count_ciri
-            if (a == 1)
+            else if (a == 1)
             {
                 score += count_ciri;
                 label1.Text = score.ToString();
             }
             #endregion
             #region count_geralt
-            if (a == 2)
+            else if (a == 2)
             {
                 score += count_geralt;
                 label1.Text = score.ToString();
@@ -318,6 +250,6 @@ namespace WindowsFormsApplication1
         {
             Application.Run(new ChooseLevel());
         }
-        #endregion
+        #endregion    
     }
 }
